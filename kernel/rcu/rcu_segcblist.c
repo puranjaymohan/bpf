@@ -620,3 +620,18 @@ void rcu_segcblist_merge(struct rcu_segcblist *dst_rsclp,
 
 	rcu_segcblist_init(src_rsclp);
 }
+
+/*
+ * SRCU and Tasks RCU wrappers: these subsystems use only normal GP
+ * sequences.  Currently simple forwarding functions; they will be
+ * adapted when gp_seq_full changes type to struct rcu_gp_oldstate.
+ */
+void srcu_segcblist_advance(struct rcu_segcblist *rsclp, unsigned long seq)
+{
+	rcu_segcblist_advance(rsclp, seq);
+}
+
+bool srcu_segcblist_accelerate(struct rcu_segcblist *rsclp, unsigned long seq)
+{
+	return rcu_segcblist_accelerate(rsclp, seq);
+}
