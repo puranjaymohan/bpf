@@ -145,8 +145,9 @@ void rcu_segcblist_merge(struct rcu_segcblist *dst_rsclp,
 			 struct rcu_segcblist *src_rsclp);
 
 /*
- * SRCU and Tasks RCU use only normal GP sequences, not expedited.
- * These wrappers will be adapted when gp_seq_full changes type.
+ * SRCU wrapper functions - SRCU only uses normal GP sequences, not expedited.
+ * These wrappers convert unsigned long GP sequence to rcu_gp_oldstate format
+ * and only check the normal GP field when advancing callbacks.
  */
 void srcu_segcblist_advance(struct rcu_segcblist *rsclp, unsigned long seq);
 bool srcu_segcblist_accelerate(struct rcu_segcblist *rsclp, unsigned long seq);
