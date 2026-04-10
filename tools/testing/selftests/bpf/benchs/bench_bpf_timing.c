@@ -50,18 +50,20 @@ static int collect_samples(struct bpf_bench_timing *t,
 {
 	unsigned int nr_cpus = bpf_num_possible_cpus();
 	__u32 timed_iters = t->batch_iters;
+	unsigned int cpu;
 	int total = 0;
 
 	if (nr_cpus > BENCH_NR_CPUS)
 		nr_cpus = BENCH_NR_CPUS;
 
-	for (unsigned int cpu = 0; cpu < nr_cpus; cpu++) {
+	for (cpu = 0; cpu < nr_cpus; cpu++) {
 		__u32 count = t->idx[cpu];
+		__u32 i;
 
 		if (count > BENCH_NR_SAMPLES)
 			count = BENCH_NR_SAMPLES;
 
-		for (__u32 i = 0; i < count && total < max_out; i++) {
+		for (i = 0; i < count && total < max_out; i++) {
 			__u64 sample = t->samples[cpu][i];
 
 			if (sample == 0)
@@ -78,6 +80,7 @@ static void compute_stats(const double *sorted, int n,
 			  struct timing_stats *s)
 {
 	double sum = 0, var_sum = 0;
+	int i;
 
 	memset(s, 0, sizeof(*s));
 	s->count = n;
@@ -96,11 +99,11 @@ static void compute_stats(const double *sorted, int n,
 	s->p95    = percentile(sorted, n, 95);
 	s->p99    = percentile(sorted, n, 99);
 
-	for (int i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 		sum += sorted[i];
 	s->mean = sum / n;
 
-	for (int i = 0; i < n; i++) {
+	for (i = 0; i < n; i++) {
 		double d = sorted[i] - s->mean;
 
 		var_sum += d * d;
