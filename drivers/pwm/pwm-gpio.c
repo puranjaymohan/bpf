@@ -44,6 +44,9 @@ static void pwm_gpio_round(struct pwm_state *dest, const struct pwm_state *src)
 
 	*dest = *src;
 
+	/* For hrtimer_resolution to be stable. */
+	lockdep_assert_irqs_disabled();
+
 	/* Round down to hrtimer resolution */
 	dividend = dest->period;
 	remainder = do_div(dividend, hrtimer_resolution);
